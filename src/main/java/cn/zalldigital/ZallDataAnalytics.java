@@ -75,6 +75,23 @@ public class ZallDataAnalytics {
     }
 
     /**
+     * 记录一个拥有一个或多个属性的事件。属性取值可接受类型为{@link Number}, {@link String}, {@link Date}和
+     * {@link List}；
+     * 若属性包含 $time 字段，则它会覆盖事件的默认时间属性，该字段只接受{@link Date}类型；
+     * 若属性包含 $project 字段，则它会指定事件导入的项目；
+     *
+     * @param distinctId 用户 ID
+     * @param originalId  匿名id
+     * @param eventName  事件名称
+     * @param properties 事件的属性
+     * @throws InvalidArgumentException eventName 或 properties 不符合命名规范和类型规范时抛出该异常
+     */
+    public void track(String distinctId, String originalId, String eventName,
+                      Map<String, Object> properties) throws InvalidArgumentException {
+        addEvent(distinctId, false, originalId, "track", eventName, properties);
+    }
+
+    /**
      * 记录用户注册事件
      * <p>
      * 这个接口是一个较为复杂的功能，请在使用前先阅读相关说明
@@ -318,6 +335,14 @@ public class ZallDataAnalytics {
             distinctIdType = (Integer) properties.get("$distinctIdType");
             event.put("distinctIdType", distinctIdType);
             properties.remove("$distinctIdType");
+        }
+
+        //originalIdType
+        Integer originalIdType;
+        if (properties != null && properties.containsKey("$originalIdType")) {
+            originalIdType = (Integer) properties.get("$originalIdType");
+            event.put("originalIdType", originalIdType);
+            properties.remove("$originalIdType");
         }
 
         this.consumer.send(event);
