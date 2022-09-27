@@ -2,6 +2,7 @@ package cn.zalldigital;
 
 import cn.zalldigital.consumer.Consumer;
 import cn.zalldigital.exception.InvalidArgumentException;
+import org.apache.commons.codec.binary.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -324,6 +325,9 @@ public class ZallDataAnalytics {
 
         if ("track".equals(actionType)) {
             event.put("event", eventName);
+            if (originDistinceId != null) {
+                event.put("original_id", originDistinceId);
+            }
         } else if ("track_signup".equals(actionType)) {
             event.put("event", eventName);
             event.put("original_id", originDistinceId);
